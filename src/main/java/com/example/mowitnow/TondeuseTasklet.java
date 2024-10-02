@@ -1,6 +1,7 @@
 package com.example.mowitnow;
 
-import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -16,10 +17,12 @@ import java.util.Scanner;
 @Component
 public class TondeuseTasklet implements Tasklet {
 
+    private static final Logger logger = LoggerFactory.getLogger(TondeuseTasklet.class);
+
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
         try {
-            File file = new File("input.txt");
+            File file = new File("src/main/resources/input");
             Scanner scanner = new Scanner(file);
 
             int maxX = scanner.nextInt();
@@ -40,11 +43,12 @@ public class TondeuseTasklet implements Tasklet {
             for (Tondeuse tondeuse : tondeuses) {
                 tondeuse.executeInstructions();
                 System.out.println(tondeuse);
+                logger.info(tondeuse.toString());
             }
 
             scanner.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         return RepeatStatus.FINISHED;
